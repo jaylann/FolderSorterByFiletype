@@ -22,6 +22,11 @@ File Sorter is a simple Python script that organizes files in a specified direct
    cd FolderSorterByFiletype
    ```
 
+3. Install dependencies:
+   ```bash
+   pip install -r requirements.txt
+   ```
+
 ## Usage
 
 You can use the script from the command line by specifying the target directory as an argument. Optionally, use the `--unique` flag to enable duplicate file removal:
