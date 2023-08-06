@@ -1,5 +1,6 @@
 import os
 import shutil
+import hashlib
 from pathlib import Path
 import argparse
 
