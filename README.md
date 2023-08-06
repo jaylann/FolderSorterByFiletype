@@ -1,12 +1,14 @@
 # File Sorter
 
-File Sorter is a simple Python script that organizes files in a specified directory based on their file extensions. It moves the files to their respective folders named after their file extensions. Loose folders will also be moved to a central 'Folders' folder.
+File Sorter is a simple Python script that organizes files in a specified directory based on their file extensions. It moves the files to their respective folders named after their file extensions. Loose folders will also be moved to a central 'Folders' folder. Additionally, it can identify and remove duplicate files when using the `--unique` flag.
 
 ## Features
 
 - Classifies files based on their extensions and moves them to corresponding folders.
 - Handles duplicate file names by renaming.
 - Moves loose folders to a central 'Folders' folder.
+- Optionally identifies and removes duplicate files based on MD5 hashes (enabled with the `--unique` flag).
+- Interactive prompt to allow users to view, confirm, or deny deletion of duplicate files.
 
 ## Installation
 
@@ -22,10 +24,10 @@ File Sorter is a simple Python script that organizes files in a specified direct
 
 ## Usage
 
-You can use the script from the command line by specifying the target directory as an argument:
+You can use the script from the command line by specifying the target directory as an argument. Optionally, use the `--unique` flag to enable duplicate file removal:
 
 ```bash
-python file_sorter.py /path/to/target/directory
+python file_sorter.py /path/to/target/directory --unique
 ```
 
 ### Example
@@ -50,6 +52,8 @@ Documents/
 └── Folders/
     └── Folder1/
 ```
+
+If there are any duplicate files, you will be prompted to delete them or view the list of duplicates.
 
 ## License
 
