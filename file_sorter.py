@@ -3,6 +3,8 @@ import shutil
 from pathlib import Path
 import argparse
 
+from tqdm import tqdm
+
 
 class FileSorter:
     """
@@ -79,19 +81,67 @@ class FileSorter:
             destination = self.resolve_duplicate_path(self.folders_folder / folder.name)
             shutil.move(str(folder), str(destination))
 
-    def sort(self):
+    def calculate_hash(self, file_path):
+        """
+        Calculate the MD5 hash of a file.
+        """
+        hash_md5 = hashlib.md5()
+        with open(file_path, "rb") as f:
+            for chunk in iter(lambda: f.read(4096), b""):
+                hash_md5.update(chunk)
+        return hash_md5.hexdigest()
+
+    def find_and_remove_duplicates(self):
+        """
+        Find duplicate files based on their MD5 hash and remove them.
+        """
+        hashes = {}
+        duplicates = []
+        for folder in tqdm(self.file_folders.values()):
+            for file in folder.glob('*'):
+                file_hash = self.calculate_hash(file)
+                if file_hash in hashes:
+                    duplicates.append(file)
+                else:
+                    hashes[file_hash] = file
+
+        self.prompt_to_delete_duplicates(duplicates)
+
+    def prompt_to_delete_duplicates(self, duplicates):
+        """
+        Ask the user if they want to delete the duplicate files, and handle their response.
+        """
+        while True:
+            response = input(f"Do you want to delete {len(duplicates)} files? (yes/no/show): ").strip().lower()
+            if response == 'yes':
+                for file in duplicates:
+                    file.unlink()
+                break
+            elif response == 'no':
+                break
+            elif response == 'show':
+                for file in duplicates:
+                    print(file)
+            else:
+                print("Invalid option. Please enter 'yes', 'no', or 'show'.")
+
+    def sort(self, unique=False):
         """
         The main function that sorts both files and folders.
+        If unique is True, it also checks for and removes duplicate files.
         """
         self.move_files()
         self.move_folders()
-
+        if unique:
+            self.find_and_remove_duplicates()
 
 if __name__ == '__main__':
+
     parser = argparse.ArgumentParser(description="Sort files in a specified directory into folders by file type.")
     parser.add_argument('directory', type=str, help="The target directory to sort.")
+    parser.add_argument('--unique', action='store_true', help="Remove duplicate files after sorting.")
 
     args = parser.parse_args()
 
     sorter = FileSorter(args.directory)
-    sorter.sort()
+    sorter.sort(unique=args.unique)
